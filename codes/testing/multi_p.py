@@ -1,15 +1,11 @@
 # -*- coding: ascii -*-
 # multi_p.py
 
-#import ray
 
 import multiprocessing
 import subprocess
-from datasets import load_dataset
+from datasets import load_dataset, parallel
 
-#ray.init()
-
-#@ray.remote
 
 def cf(example)->None:
   #subprocess.run(['clang','-O3','-c','-xir','-o','-','-'],input=example,capture_output=True).stdout
@@ -24,19 +20,15 @@ def cf(example)->None:
   return None 
 
 #ds = load_dataset('llvm-ml/ComPile', split='train')
-#ds = load_dataset("llvm-ml/ComPile", split="train[0:1000]")
-ds = load_dataset("llvm-ml/ComPile", split="train[0:31653]")
-#ds.map(cf, input_columns='content', num_proc=16)
+with parallel.parallel_backend('spark'):
+  #ds = load_dataset("llvm-ml/ComPile", split="train[0:1000]", num_proc=2)
+  ds = load_dataset("llvm-ml/ComPile", split="train[0:10]", num_proc=2)
+#ds = load_dataset("llvm-ml/ComPile", split="train[0:31653]", num_proc=2)
 
+print(multiprocessing.cpu_count())
 
-cpus = multiprocessing.cpu_count()
+#cpus = multiprocessing.cpu_count()
 
-def square(n):
-    return n * n
-
-#print(pool.map(square, range(1000)))
-pool = multiprocessing.pool.ThreadPool(processes=cpus)
-#pool = multiprocessing.Pool(processes=cpus)
-pool.map(cf, ds['content'])
-pool.close()
-#ray.get([cf.remote(x) for x in ds['content']])
+#pool = multiprocessing.pool.ThreadPool(processes=cpus)
+#pool.map(cf, ds['content'])
+#pool.close()
