@@ -21,14 +21,13 @@ def cf(example)->None:
 
 #ds = load_dataset('llvm-ml/ComPile', split='train')
 with parallel.parallel_backend('spark'):
-  #ds = load_dataset("llvm-ml/ComPile", split="train[0:1000]", num_proc=2)
-  ds = load_dataset("llvm-ml/ComPile", split="train[0:10]", num_proc=2)
-#ds = load_dataset("llvm-ml/ComPile", split="train[0:31653]", num_proc=2)
+  #ds = load_dataset("llvm-ml/ComPile", split="train[0:10]", num_proc=2)
+  #ds = load_dataset("llvm-ml/ComPile", split="train[0:31653]", num_proc=2)
+  ds = load_dataset("llvm-ml/ComPile", split="train", num_proc=2)
 
-print(multiprocessing.cpu_count())
 
-#cpus = multiprocessing.cpu_count()
+cpus = multiprocessing.cpu_count()
 
-#pool = multiprocessing.pool.ThreadPool(processes=cpus)
-#pool.map(cf, ds['content'])
-#pool.close()
+pool = multiprocessing.pool.ThreadPool(processes=cpus)
+pool.map(cf, ds['content'][:1000])
+pool.close()
