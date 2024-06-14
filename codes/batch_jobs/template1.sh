@@ -12,7 +12,7 @@
 # This is a batch job template for a program using a single processor
 # core/thread (a serial job).
 #
-#SBATCH --nodes=1 --ntasks=1 --cpus-per-task=4
+#SBATCH --nodes=1 --ntasks=1 --cpus-per-task=8
 # SBATCH --nodes=1 --ntasks=1 --cpus-per-task=1
 # SBATCH --nodes=1 --ntasks=1 --cpus-per-task=16
 #
@@ -82,7 +82,7 @@
 #        Jobs default to the default runtime limit of the chosen partition
 #        if this option is omitted.
 #
-#SBATCH --time=0-00:08:00
+#SBATCH --time=0-00:12:00
 #
 #        You can also provide a minimum acceptable runtime so the scheduler
 #        may be able to run your job sooner.  If you do not provide a
