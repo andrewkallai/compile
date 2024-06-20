@@ -1,10 +1,11 @@
 #!/bin/bash
 start=1
+end=3
 #end=31653
-end=2
+#end=2
 TYPE=c
 PREFIX="/lustre/schandra_crpl/users/3302/ir_bc_files/"
-batch_size=5000
+batch_size=200
 echo "${TYPE}" >> job_numbers.txt
 date >> job_numbers.txt
 
@@ -19,9 +20,9 @@ do
     cat template2.sh >> $js
 
     #for (( j=i; j<i+batch_size && j<=$end; j++ ))
-    echo "for (( j=${i}; j<${i}+${batch_size} && j<=${end}; j++ ))" \
-    >> ${js}
-    echo "do" >> ${js}
+    #echo "for (( j=${i}; j<${i}+${batch_size} && j<=${end}; j++ ))" \
+    #>> ${js}
+    #echo "do" >> ${js}
         #echo "clang -O3 -c -o ${PREFIX}${TYPE}_out/file${j}.o \
         #${PREFIX}${TYPE}/file${j}.bc" >> ${js} 
         
@@ -33,16 +34,24 @@ do
         #${PREFIX}${TYPE}/file\${j}.bc \
         #>> ${PREFIX}${TYPE}_out/file\${i}.o" >> ${js} 
 
-        echo "/usr/bin/time -o \
-        ${PREFIX}${TYPE}_time/time\${j}.txt \
-        clang -O3 -c -o ${PREFIX}${TYPE}_out/file\${j}.o \
-        ${PREFIX}${TYPE}/file\${j}.bc" >> ${js} 
-    echo "done" >> ${js}
+        #echo "/usr/bin/time -o \
+        #${PREFIX}${TYPE}_time/time\${j}.txt \
+        #clang -O3 -c -o ${PREFIX}${TYPE}_out/file\${j}.o \
+        #${PREFIX}${TYPE}/file\${j}.bc" >> ${js} 
+        STOP=$((i+batch_size))
+        if [ $STOP -gt ${end} ]; then
+          STOP=${end} 
+        fi
+        echo "cd ${PREFIX}" >> ${js}
+        echo "make --always-make -i -f ./makefile -j 64 \
+        lang="${TYPE}" begin="${i}" \
+        end="${STOP}"" >> ${js}
+    #echo "done" >> ${js}
 
     while true; do
-        sbatch ${js} >> job_numbers.txt
+        #sbatch ${js} >> job_numbers.txt
         if [ $? -ne 0 ]; then
-            #squeue -u andrewka --states=PD --noheader | wc -l
+            squeue -u andrewka --states=PD --noheader | wc -l
             echo "sbatch failed. Sleeping for 1 second..."
             sleep 1
             #exit 1
