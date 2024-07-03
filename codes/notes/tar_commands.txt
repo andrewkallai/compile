@@ -1,0 +1,9 @@
+regular tar archive
+tar --create --file=<filename.tar> <target_dir or files>
+tar archive with maximum compression from xz using all available threads 
+tar --create --file=- <target_dir> | xz -9 -T0 > <filename.tar.xz>
+extract files from a tar archive and/or a compressed tar archive to the given
+dir
+tar --extract --file=<filename.tar> --directory=<dir> [file-to-extract]
+list files in a tar archive
+tar --list --file=<filename.tar>
