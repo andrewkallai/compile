@@ -16,3 +16,8 @@ end with swift
 49051 swift files
 
 batch_size: 400
+ignored rust files: 2886
+ignored c files: 1
+rust files plotted: 206173
+c files plotted: 31652
+

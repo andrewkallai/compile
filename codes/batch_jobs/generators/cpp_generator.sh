@@ -4,7 +4,7 @@ end=87225
 TYPE=cpp
 batch_size=140
 PREFIX="/lustre/schandra_crpl/users/3302/ir_bc_files/"
-BATCH_PATH="/home/3302/hf_py_code/compile/codes/batch_jobs/"
+BATCH_PATH="/home/3302/hf_py_code/compile/codes/batch_jobs/makefile_dir/"
 cd /home/3302/hf_py_code/compile/codes/batch_jobs/generators
 echo "${TYPE}" >> job_numbers.txt
 date >> job_numbers.txt
@@ -32,8 +32,8 @@ do
     echo "tar --extract --file=${PREFIX}${TYPE}/${TYPE}_bc_files.tar \
     bc_files/file{${i}..${STOP}}.bc" >> ${js}
     echo "cd /tmp/ir_bc_files/ps_${i}" >> ${js}
-    echo "make -f ${BATCH_PATH}makefile -j 64 \
-    lang="${TYPE}" begin="${i}" \
+    echo "make -f ${BATCH_PATH}no_ignore_error_makefile \
+    -j 64 lang="${TYPE}" begin="${i}" \
     end="${STOP}"" >> ${js}
     echo "mkdir -p ${PREFIX}${TYPE}/ps_${i}" >> ${js}
     echo " > ${PREFIX}${TYPE}/ps_${i}/text_segments.csv" \

@@ -12,7 +12,7 @@
 # This is a batch job template for a program using a single processor
 # core/thread (a serial job).
 #
-#SBATCH --nodes=1 --ntasks=1 --cpus-per-task=16
+#SBATCH --nodes=1 --ntasks=1 --cpus-per-task=50
 # SBATCH --nodes=1 --ntasks=1 --cpus-per-task=1
 # SBATCH --nodes=1 --ntasks=1 --cpus-per-task=16
 #
@@ -50,7 +50,8 @@
 #        PLEASE NOTE:  On DARWIN every job is **required** to include the
 #                      --partition flag in its submission!
 #
-#SBATCH --partition=standard
+#SBATCH --partition=xlarge-mem
+# SBATCH --partition=standard
 # [EDIT] Jobs that will run in one of the GPU partitions can request GPU
 #        resources using ONE of the following flags:
 #

@@ -19,8 +19,10 @@ targets="${strings[@]}"
 
 #for dir in "${strings[@]}"; do
 for dir in "${language[@]}"; do
-    echo -n "${dir} "
+    echo -n "${dir} ps_ count "
 #    ls -1 ${PREFIX}${dir}/ | wc -l
     find ${PREFIX}${dir}/ -name "ps_*" | wc -l
+    echo -n "job_results "
+    ls -1 ${PREFIX}${dir}/job_results/ | wc -l
 done
 

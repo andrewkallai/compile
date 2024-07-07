@@ -1,0 +1,3 @@
+to grab the numbers of the files with no text segment size
+and print them onto one line:
+awk -F, '{print substr($1,5)}' ORS=' ' missing_files.csv >> test_one_line.txt

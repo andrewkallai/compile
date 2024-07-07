@@ -20,7 +20,10 @@ def plot_functionality(lang: str, show: bool=False)->None:
   plt.yscale("log")
   plt.xlabel("text_segment_size (bytes)")
   plt.ylabel("compiler_cpu_instructions_count")
-  plt.title("Compiler Instructions vs. Text Segment Size")
+  if (lang == "cpp"):
+    plt.title("Clang++ Compiler Instructions vs. Text Segment Size ("+lang+")")
+  else:
+    plt.title("Clang Compiler Instructions vs. Text Segment Size ("+lang+")")
   plt.plot(x_axis,z, 'r')
   equation = f"${c:.1e}x^2 + {b:.1e}x + {a:.1e}$"
   plt.legend([f"fit: {equation}", "original"])

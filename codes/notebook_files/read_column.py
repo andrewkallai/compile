@@ -10,6 +10,7 @@ def open_and_load(lang: str)->[int]:
   with open(PREFIX+lang+"_combined_results.csv", mode='r', newline='') as file:
     for x in csv.DictReader(file):
       textseg_data.append(int(x[" text_segment_size"]))
+      
       inst_data.append(int(x[" instructions"]))
 #  with open(PREFIX+lang+"_instructions.csv", mode='r', newline='') as file:
 #    for x in csv.DictReader(file):
