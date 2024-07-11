@@ -1,15 +1,20 @@
 #!/bin/bash
-start=144642
-end=353700
-TYPE=rust
-batch_size=523
-array_size=399
+start=1
+end=31653
+TYPE=c
+batch_size=80
+#batch_size=4
 PREFIX="/lustre/schandra_crpl/users/3302/ir_bc_files/"
 BATCH_PATH="/home/3302/hf_py_code/compile/codes/batch_jobs/makefile_dir/"
-
+for (( i=$start; i<$end; i+=$batch_size ))
+do
+  values+="$i,"
+done
+#values+=${end}
 cd /home/3302/hf_py_code/compile/codes/batch_jobs/generators
 echo "${TYPE}" >> job_numbers.txt
 date >> job_numbers.txt
+#echo $(SLURM_ARRAY_TASK_ID)
 js="main_p.sh"
 cp job_template.sh $js
 echo "#SBATCH \
@@ -20,7 +25,7 @@ echo "#SBATCH \
 #echo "#SBATCH --array=${values}" >> $js
 #echo "#SBATCH --array=${start}-${end}:${batch_size}" >> $js
 #echo "#SBATCH --array=0-9999" >> $js
-echo "#SBATCH --array=0-${array_size}" >> $js
+echo "#SBATCH --array=0-395" >> $js
 #echo "#SBATCH --array=0-59" >> $js
 cat setup_portion.sh >> $js
 
@@ -46,9 +51,8 @@ textseg_sizes object_files" >> ${js}
 echo "eval tar --extract --file=${PREFIX}${TYPE}/${TYPE}_bc_files.tar \
 bc_files/file{\$I..\$STOP}.bc" >> ${js}
 echo "cd /tmp/ir_bc_files/ps_\$I" >> ${js}
-#echo "srun make -f ${BATCH_PATH}no_ignore_error_makefile \
-echo "make -f ${BATCH_PATH}no_ignore_error_makefile \
--j 64 lang="${TYPE}" begin="\$I" \
+echo "srun make -f ${BATCH_PATH}no_ignore_error_makefile \
+-j 128 lang="${TYPE}" begin="\$I" \
 end="\$STOP"" >> ${js}
 echo "mkdir -p ${PREFIX}${TYPE}/ps_\$I" >> ${js}
 echo " > ${PREFIX}${TYPE}/ps_\$I/text_segments.csv" \

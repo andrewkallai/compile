@@ -3,22 +3,30 @@ BATCH_PATH="/home/3302/hf_py_code/compile/codes/batch_jobs/makefile_dir/"
 cd /home/3302/hf_py_code/compile/codes/batch_jobs/generators
 echo "${TYPE}" >> job_numbers.txt
 date >> job_numbers.txt
+echo $(SLURM_ARRAY_TASK_ID)
+js="main_p.sh"
+cp job_template.sh $js
+echo "#SBATCH \
+--output=${PREFIX}${TYPE}/job_results/${i}-%j.out" >> $js
+echo "#SBATCH \
+--error=${PREFIX}${TYPE}/job_results/${i}-%j.out" >> $js
 
 for (( i=$start; i<=$end; i+=$batch_size ))
 do
-    js="p_${i}.sh"
-    cp job_template.sh $js
-    echo "#SBATCH \
-    --output=${PREFIX}${TYPE}/job_results/${i}-%j.out" >> $js
-    echo "#SBATCH \
-    --error=${PREFIX}${TYPE}/job_results/${i}-%j.out" >> $js
-#    echo "--array=1-7:2"
-    cat setup_portion.sh >> $js
+#  values+=($i)
+  values+="$i"
+done
+#values[-1]=${end}
+echo "$values"
 
-    STOP=$((i+batch_size-1))
-    if [ $STOP -gt ${end} ]; then
-      STOP=${end} 
-    fi
+
+#    echo "--array=1-7:2"
+cat setup_portion.sh >> $js
+
+#    STOP=$((i+batch_size-1))
+#    if [ $STOP -gt ${end} ]; then
+#      STOP=${end} 
+#    fi
    
     echo "cd /tmp" >> ${js}
     echo "mkdir -p ir_bc_files/ps_${i}/${TYPE}" >> ${js}
@@ -44,7 +52,7 @@ do
     echo "rm -r ps_${i}" >> ${js}
 
     while true; do
-        sbatch ${js} >> job_numbers.txt
+#        sbatch ${js} >> job_numbers.txt
         if [ $? -ne 0 ]; then
             squeue -u andrewka --states=PD --noheader | wc -l
             echo "sbatch failed. Sleeping for 1 second..."
@@ -53,6 +61,6 @@ do
             break
         fi
     done
-    rm ${js}
-done
+#    rm ${js}
+#done
 

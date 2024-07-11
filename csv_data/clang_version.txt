@@ -1,0 +1,6 @@
+clang version 19.0.0git
+Target: x86_64-unknown-linux-gnu
+Thread model: posix
+InstalledDir: /lustre/schandra_crpl/sw/LLVM/llvm_19.x/bin
+Build config: +assertions
+commit cc945e41a7788327d0e8ba0ea6dc3571d7efa04f

@@ -27,7 +27,8 @@ def plot_functionality(lang: str, show: bool=False)->None:
   plt.plot(x_axis,z, 'r')
   equation = f"${c:.1e}x^2 + {b:.1e}x + {a:.1e}$"
   plt.legend([f"fit: {equation}", "original"])
-  plt.savefig(fname="c_instvtext.pdf", format="pdf")
   if (show):
     plt.show()
+  else:
+    plt.savefig(fname=lang+"_instvtext.pdf", format="pdf")
 

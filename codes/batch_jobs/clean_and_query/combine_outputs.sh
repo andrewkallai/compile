@@ -41,5 +41,5 @@ for dir in "${language[@]}"; do
   > ${dir}/results/${dir}_combined_results.csv
   rm ${dir}/results/${dir}_instructions.csv \
   ${dir}/results/${dir}_text_segments.csv 
-#  rm -r ${dir}/ps_*
+  rm -r ${dir}/ps_*
 done

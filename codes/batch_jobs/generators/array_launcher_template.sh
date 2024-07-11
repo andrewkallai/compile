@@ -1,9 +1,3 @@
-#!/bin/bash
-start=144642
-end=353700
-TYPE=rust
-batch_size=523
-array_size=399
 PREFIX="/lustre/schandra_crpl/users/3302/ir_bc_files/"
 BATCH_PATH="/home/3302/hf_py_code/compile/codes/batch_jobs/makefile_dir/"
 
