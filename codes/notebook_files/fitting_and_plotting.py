@@ -18,6 +18,8 @@ def plot_functionality(lang: str, show: bool=False)->None:
   plt.scatter(textseg_data,inst_data)
   plt.xscale("log")
   plt.yscale("log")
+#  plt.gca().set_ylim([min(inst_data), 10**13])
+  plt.gca().set_ylim([10**8, 10**13])
   plt.xlabel("text_segment_size (bytes)")
   plt.ylabel("compiler_cpu_instructions_count")
   if (lang == "cpp"):

@@ -1,12 +1,16 @@
-#!/bin/bash
-start=144642
-end=353700
-TYPE=rust
-batch_size=523
-array_size=399
-PREFIX="/lustre/schandra_crpl/users/3302/ir_bc_files/"
+if [ -z $1 ]; then
+  echo "Missing STORAGE argument."
+  exit 1
+fi
+#if [ -z $2 ]; then
+#  echo "Missing MAKEFILE argument."
+#  exit 1
+#fi
+STORAGE="/lustre/schandra_crpl/users/3302/ir_bc_files/"
+#STORAGE="$1"
 BATCH_PATH="/home/3302/hf_py_code/compile/codes/batch_jobs/makefile_dir/"
-
+#MAKEFILE="$2"
+exit 1
 cd /home/3302/hf_py_code/compile/codes/batch_jobs/generators
 echo "${TYPE}" >> job_numbers.txt
 date >> job_numbers.txt
@@ -17,26 +21,13 @@ echo "#SBATCH \
 echo "#SBATCH \
 --error=${PREFIX}${TYPE}/job_results/slurm-%A_%a.out" >> $js
 
-#echo "#SBATCH --array=${values}" >> $js
-#echo "#SBATCH --array=${start}-${end}:${batch_size}" >> $js
-#echo "#SBATCH --array=0-9999" >> $js
-echo "#SBATCH --array=0-${array_size}" >> $js
-#echo "#SBATCH --array=0-59" >> $js
+echo "#SBATCH --array=0-399" >> $js
 cat setup_portion.sh >> $js
 
-#    STOP=$((i+batch_size-1))
-#    if [ $STOP -gt ${end} ]; then
-#      STOP=${end} 
-#    fi
-#100000
-#echo "I=\$SLURM_ARRAY_TASK_ID" >> ${js}
-echo "I=\$((\$SLURM_ARRAY_TASK_ID*${batch_size}+1))" >> ${js}
-#echo "if [ \$I -eq 0 ]; then" >> ${js}
-#echo "  I=1" >> ${js}
-#echo "fi" >> ${js}
-echo "STOP=\$((\$I+${batch_size}-1))" >> ${js}
-echo "if [ \$STOP -gt ${end} ]; then" >> ${js}
-echo "  STOP=${end}" >> ${js}
+echo "I=\$((\$SLURM_ARRAY_TASK_ID*${batch_size}+1+${START}))" >> ${js}
+echo "STOP=\$((\$I+${batch_size}-1+${START}))" >> ${js}
+echo "if [ \$SLURM_ARRAY_TASK_ID -eq 399 ]; then" >> ${js}
+echo "  STOP=\$((\$I+${end}%399-1+${START}))" >> ${js}
 echo "fi" >> ${js}
 echo "cd /tmp" >> ${js}
 echo "mkdir -p ir_bc_files/ps_\$I/${TYPE}" >> ${js}
@@ -46,7 +37,6 @@ textseg_sizes object_files" >> ${js}
 echo "eval tar --extract --file=${PREFIX}${TYPE}/${TYPE}_bc_files.tar \
 bc_files/file{\$I..\$STOP}.bc" >> ${js}
 echo "cd /tmp/ir_bc_files/ps_\$I" >> ${js}
-#echo "srun make -f ${BATCH_PATH}no_ignore_error_makefile \
 echo "make -f ${BATCH_PATH}no_ignore_error_makefile \
 -j 64 lang="${TYPE}" begin="\$I" \
 end="\$STOP"" >> ${js}
@@ -61,17 +51,4 @@ echo "eval cat ${TYPE}/instruction_counts/inst{\$I..\$STOP}.csv \
 >> ${PREFIX}${TYPE}/ps_\$I/instructions.csv" >> ${js}
 echo "cd .." >> ${js}
 echo "rm -r ps_\$I" >> ${js}
-
-#while true; do
-#        sbatch ${js} >> job_numbers.txt
-#    if [ $? -ne 0 ]; then
-#        squeue -u andrewka --states=PD --noheader | wc -l
-#        echo "sbatch failed. Sleeping for 1 second..."
-#        sleep 1
-#    else
-#        break
-#    fi
-#done
-#    rm ${js}
-#done
 

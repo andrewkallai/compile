@@ -15,6 +15,10 @@ if [ -n "$2" ]; then
   data_type+=("ps_*")
 fi
 
+if [ -n "$3" ]; then
+  scancel -u andrewka
+fi
+
 declare -a strings
 
 for result in "${data_type[@]}"; do
@@ -23,9 +27,8 @@ done
 
 
 targets="${strings[@]}"
-scancel -u andrewka
-rm ${HOME_PRE}job_numbers.txt
-touch ${HOME_PRE}job_numbers.txt
+#rm ${HOME_PRE}job_numbers.txt
+#touch ${HOME_PRE}job_numbers.txt
 cd ${PREFIX}
 
 rm -r ${targets}

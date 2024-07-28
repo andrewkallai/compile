@@ -12,9 +12,7 @@
 # This is a batch job template for a program using a single processor
 # core/thread (a serial job).
 #
-#SBATCH --nodes=1 --ntasks=1 --cpus-per-task=8
-# SBATCH --nodes=1 --ntasks=1 --cpus-per-task=1
-# SBATCH --nodes=1 --ntasks=1 --cpus-per-task=16
+#SBATCH --nodes=1 --ntasks=1 --cpus-per-task=12
 #
 # [EDIT] All jobs have memory limits imposed.  The default is 1 GB per
 #        CPU allocated to the job.  The default can be overridden either
@@ -50,6 +48,7 @@
 #        PLEASE NOTE:  On DARWIN every job is **required** to include the
 #                      --partition flag in its submission!
 #
+# SBATCH --partition=xlarge-mem
 #SBATCH --partition=standard
 # [EDIT] Jobs that will run in one of the GPU partitions can request GPU
 #        resources using ONE of the following flags:
@@ -82,7 +81,7 @@
 #        Jobs default to the default runtime limit of the chosen partition
 #        if this option is omitted.
 #
-#SBATCH --time=0-00:12:00
+#SBATCH --time=0-00:20:00
 #
 #        You can also provide a minimum acceptable runtime so the scheduler
 #        may be able to run your job sooner.  If you do not provide a
@@ -97,8 +96,6 @@
 #        word SBATCH on the following lines; see the man page for sbatch for
 #        special tokens that can be used in the filenames:
 #
-#SBATCH     --output=/lustre/schandra_crpl/users/3302/ir_bc_files/c/job_results/1-%j.out
-#SBATCH     --error=/lustre/schandra_crpl/users/3302/ir_bc_files/c/job_results/1-%j.out
 #
 # [EDIT] Slurm can send emails to you when a job transitions through various
 #        states: NONE, BEGIN, END, FAIL, REQUEUE, ALL, TIME_LIMIT,
@@ -176,7 +173,9 @@
 #
 #vpkg_require intel/2019
 
-
+#SBATCH --output=/lustre/schandra_crpl/users/3302/ir_bc_files/c/job_results/slurm-%A_%a.out
+#SBATCH --error=/lustre/schandra_crpl/users/3302/ir_bc_files/c/job_results/slurm-%A_%a.out
+#SBATCH --array=0-399
 #
 # Do general job environment setup:
 #
@@ -187,15 +186,22 @@
 #        using the srun command.
 #
 
+I=$(($SLURM_ARRAY_TASK_ID*79+1))
+STOP=$(($I+79-1))
+if [ $SLURM_ARRAY_TASK_ID -eq 399 ]; then
+  STOP=$(($I+31653%399-1))
+fi
 cd /tmp
-mkdir -p ir_bc_files/ps_1/c
-cd ir_bc_files/ps_1/c
-mkdir -p bc_files instruction_counts perf_stat_files     textseg_sizes object_files
-tar --extract --file=/lustre/schandra_crpl/users/3302/ir_bc_files/c/c_bc_files.tar     bc_files/file{1..2}.bc
-cd /tmp/ir_bc_files/ps_1
-make -f /home/3302/hf_py_code/compile/codes/batch_jobs/makefile -j 64     lang=c begin=1     end=2
-mkdir -p /lustre/schandra_crpl/users/3302/ir_bc_files/c/ps_1
-cat c/textseg_sizes/textseg{1..2}.csv     >> /lustre/schandra_crpl/users/3302/ir_bc_files/c/ps_1/text_segments.csv
-cat c/instruction_counts/inst{1..2}.csv     >> /lustre/schandra_crpl/users/3302/ir_bc_files/c/ps_1/instructions.csv
+mkdir -p ir_bc_files/ps_$I/c
+cd ir_bc_files/ps_$I/c
+mkdir -p bc_files instruction_counts perf_stat_files textseg_sizes object_files
+eval tar --extract --file=/lustre/schandra_crpl/users/3302/ir_bc_files/c/c_bc_files.tar bc_files/file{$I..$STOP}.bc
+cd /tmp/ir_bc_files/ps_$I
+make -f /home/3302/hf_py_code/compile/codes/batch_jobs/makefile_dir/no_ignore_error_makefile -j 96 lang=c begin=$I end=$STOP
+mkdir -p /lustre/schandra_crpl/users/3302/ir_bc_files/c/ps_$I
+ > /lustre/schandra_crpl/users/3302/ir_bc_files/c/ps_$I/text_segments.csv
+ > /lustre/schandra_crpl/users/3302/ir_bc_files/c/ps_$I/instructions.csv
+eval cat c/textseg_sizes/textseg{$I..$STOP}.csv >> /lustre/schandra_crpl/users/3302/ir_bc_files/c/ps_$I/text_segments.csv
+eval cat c/instruction_counts/inst{$I..$STOP}.csv >> /lustre/schandra_crpl/users/3302/ir_bc_files/c/ps_$I/instructions.csv
 cd ..
-rm -ivr ps_1
+rm -r ps_$I

@@ -3,7 +3,8 @@ import csv
 
 def open_and_load(lang: str)->[int]:
 #  PREFIX:str="/home/3302/hf_py_code/compile/codes/results/"
-  PREFIX:str="/lustre/schandra_crpl/users/3302/ir_bc_files/"+lang+"/results/"
+  #PREFIX:str="/lustre/schandra_crpl/users/3302/ir_bc_files/"+lang+"/results/"
+  PREFIX:str="/home/3302/hf_py_code/compile/csv_data/inst_scatterplots/"
   textseg_data: [int] = []
   inst_data: [int] = []
 #  with open(PREFIX+lang+"_text_segments.csv", mode='r', newline='') as file:
