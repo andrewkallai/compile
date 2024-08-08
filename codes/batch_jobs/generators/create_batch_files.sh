@@ -1,4 +1,5 @@
 #!/bin/bash
+set -o errexit
 #USAGE
 #./create_batch_files.sh <STORAGE_PATH> <MAKEFILE_PATH>
 
@@ -13,9 +14,22 @@ else
   MAKE_PATH="$2"
 fi
 
-lang=("c" "cpp" "julia" "rust" "swift")
-array1=(0 31653 87225 144641 353700)
-sizes=(31653 55572 57416 209059 49051)
+#lang=("c" "cpp" "julia" "rust" "swift")
+#array1=(0 31653 87225 144641 353700)
+#sizes=(31653 55572 57416 209059 49051)
+lang=()
+array1=()
+sizes=()
+
+#tail -n +2 "../../dataset_to_files/indices.csv"
+while IFS=',' read -r language start_index end_index; do
+    echo $language
+    lang+=$language
+    echo $start_index
+    array1+=$start_index
+    echo $end_index
+    sizes+=$((${end_index}-${start_index}))
+done < <(tail -n +2 "../../dataset_to_files/indices.csv")
 
 length=${#lang[@]}
 
