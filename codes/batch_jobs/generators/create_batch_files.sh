@@ -2,7 +2,7 @@
 set -o errexit
 
 #USAGE
-#./create_batch_files.sh <STORAGE_PATH> <MAKEFILE_PATH>
+#./create_batch_files.sh <STORAGE_PATH> <TEMP_DIR> <MAKEFILE_PATH>
 
 if [ -z "$1" ]; then
   STORAGE="/lustre/schandra_crpl/users/3302/ir_bc_files"
@@ -14,6 +14,7 @@ if [ -z "$2" ]; then
 else
   MAKE_PATH="$2"
 fi
+TEMP_DIR="/tmp"
 
 lang=()
 start_ids=()
@@ -39,6 +40,7 @@ do
   echo "TYPE=${lang[$i]}" >> $js
   echo "SIZE=${sizes[$i]}" >> $js
   echo "STORAGE=${STORAGE}" >> $js
+  echo "TEMP_DIR=${TEMP_DIR}" >> $js
   echo "MAKE_PATH=${MAKE_PATH}" >> $js
   cat batch_main_body.sh >> $js
   chmod 744 $js

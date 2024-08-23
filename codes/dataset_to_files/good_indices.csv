@@ -1,0 +1,6 @@
+language,start_index,end_index
+c,0,31653
+cpp,31653,87225
+julia,87225,144641
+rust,144641,353700
+swift,353700,402751
