@@ -1,0 +1,3 @@
+print(outl[outl.instruction > outl["instruction"].quantile(q=.75,interpolation='lower')])
+
+WILD := $(filter-out 313514 344534, $(WILD))

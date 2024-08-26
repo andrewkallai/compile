@@ -1,5 +1,3 @@
-THREADS=24
-export PYTHONPATH="/home/3302/llvm-ir-dataset-utils:$PYTHONPATH"
 
 set -o errexit
 DATA_NAMES=("text_segment" "instruction" "ir_features" "max_pass")
@@ -14,6 +12,7 @@ else
     STOP=$(($I+${SIZE}%$SLURM_ARRAY_TASK_MAX-1))
   fi
 fi
+
 cd ${TEMP_DIR}
 mkdir -p ir_bc_files/ps_$I/${TYPE}
 cd ir_bc_files/ps_$I/${TYPE}
@@ -36,16 +35,6 @@ for element in "${DATA_NAMES[@]}"; do
   eval cat ${TYPE}/${element}_counts/${element}{$I..$STOP}.csv \
   >> ${TARGET_DIR}/${element}.csv
 done
-
-#mkdir -p ${STORAGE}/${TYPE}/ps_$I
-#> ${STORAGE}/${TYPE}/ps_$I/text_segments.csv
-
-#> ${STORAGE}/${TYPE}/ps_$I/instructions.csv
-
-#eval cat ${TYPE}/textseg_sizes/textseg{$I..$STOP}.csv \
-#  >> ${STORAGE}/${TYPE}/ps_$I/text_segments.csv
-#eval cat ${TYPE}/instruction_counts/inst{$I..$STOP}.csv \
-#  >> ${STORAGE}/${TYPE}/ps_$I/instructions.csv
 
 cd ..
 rm -r ps_$I
