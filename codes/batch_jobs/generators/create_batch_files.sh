@@ -2,18 +2,27 @@
 set -o errexit
 
 #USAGE
-#./create_batch_files.sh <STORAGE_PATH> <MAKEFILE_PATH>
+#./create_batch_files.sh <STORAGE_PATH> <TEMP_DIR> <MAKEFILE_PATH> [THREADS]
 
 if [ -z "$1" ]; then
-  STORAGE="/lustre/schandra_crpl/users/3302/ir_bc_files"
+  echo "Missing storage argument."
 else
   STORAGE="$1"
 fi
 if [ -z "$2" ]; then
-  MAKE_PATH="/home/3302/hf_py_code/compile/codes/batch_jobs/makefile_dir"
+  echo "Missing temporary directory argument."
 else
-  MAKE_PATH="$2"
+  TEMP_DIR="$2"
 fi
+if [ -z "$3" ]; then
+  echo "Missing makefile location argument."
+else
+  MAKE_PATH="$3"
+fi
+if [ -z "$4" ]; then
+  THREADS=8
+else
+  THREADS="$4"
 
 lang=()
 start_ids=()
@@ -32,14 +41,15 @@ do
   js="${lang[$i]}_batch.sh"
   cp job_template.sh $js
   echo "#SBATCH --output=${STORAGE}/${lang[$i]}/job_results/slurm-%A_%a.out" >> $js
-
   echo "#SBATCH --error=${STORAGE}/${lang[$i]}/job_results/slurm-%A_%a.out" >> $js
 
   echo "START=${start_ids[$i]}" >> $js
   echo "TYPE=${lang[$i]}" >> $js
   echo "SIZE=${sizes[$i]}" >> $js
   echo "STORAGE=${STORAGE}" >> $js
+  echo "TEMP_DIR=${TEMP_DIR}" >> $js
   echo "MAKE_PATH=${MAKE_PATH}" >> $js
+  echo "THREADS=${THREADS}" >> $js
   cat batch_main_body.sh >> $js
   chmod 744 $js
 done

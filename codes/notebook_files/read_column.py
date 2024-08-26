@@ -1,16 +1,25 @@
-# -*- coding: ascii -*-
-import csv
+"""Utilities for reading and processing csv data with features for outlier analysis.
+
+csv_to_pandas_df
+  Returns: pandas.core.frame.DataFrame
+  Example usage: csv_to_pandas('c', '/tmp', file_name='_other_suffix.csv', write_to_csv=True)
+outlier_rows
+  Returns: pandas.core.frame.DataFrame
+  Example usage: outlier_rows('c', '/tmp')
+"""
 
 
-def open_and_load(lang: str, STORAGE: str = '/home/3302/hf_py_code/compile/csv_data/inst_scatterplots/') -> [int]:
-    '''
-    Function to read csv files containing text segment size and instruction counts data.
-    '''
-    textseg_data: [int] = []
-    inst_data: [int] = []
-    with open(STORAGE+lang+"_combined_results.csv", mode='r', newline='') as file:
-        for x in csv.DictReader(file):
-            textseg_data.append(int(x[" text_segment_size"]))
+def csv_to_pandas_df(lang: str, storage: str, file_name_suffix: str = 'combined.csv', write_to_csv: bool = False):
+    import pandas as pd
 
-            inst_data.append(int(x[" instructions"]))
-    return textseg_data, inst_data
+    df = pd.read_csv(storage+lang+'_'+file_name_suffix, skipinitialspace=True)
+    if (write_to_csv):
+        df.to_csv(lang+'_normalized_'+file_name_suffix, index=False)
+    return df
+
+
+def outlier_rows(lang: str, storage: str) -> None:
+    df = csv_to_pandas_df(lang, storage)
+    outl = df.nlargest(df.shape[0]//2, "percentage")
+    #  print(outl[outl.instruction > outl["instruction"].quantile(q=.75, interpolation='lower')])
+    return outl.nlargest(10, "instruction")

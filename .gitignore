@@ -1,3 +1,7 @@
 *~
 codes/notebook_files/.ipynb_checkpoints/
 __pycache__/
+*.pdf
+*.o
+*.bc
+*.json
